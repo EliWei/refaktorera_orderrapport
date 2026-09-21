@@ -65,6 +65,28 @@ def clean_data(data):
     
     return data
 
+def summarise_by(data, column):
+    summary = (
+            data.groupby(
+                column,
+                as_index=False,
+            )
+            .agg(
+                order_count=("order_id", "nunique"),
+                total_sales=("discounted_value", "sum"),
+                returns=("returned", "sum"),
+            )
+        )
+    summary["total_sales"] = summary["total_sales"].round(2)
+
+    summary["return_rate"] = (summary["returns"] / summary["order_count"]).round(3)
+
+    summary = (summary.sort_values("total_sales", ascending=False).reset_index(drop=True))
+
+    return summary
+               
+
+
 # order_value, discounted_value, overview, result1, result2, returns_by_category
 def calculate_metrics(data):
     data["order_value"] = (
@@ -97,91 +119,17 @@ def calculate_metrics(data):
                 ],
             }
         )
-    
-    result1 = (
-            data.groupby(
-                "product_category",
-                as_index=False,
-            )
-            .agg(
-                order_count=("order_id", "nunique"),
-                total_sales=("discounted_value", "sum"),
-                returns=("returned", "sum"),
-            )
-        )
-    
-    result1["total_sales"] = (
-            result1["total_sales"].round(2)
-        )
-    
-    result1["return_rate"] = (
-            result1["returns"]
-            / result1["order_count"]
-        ).round(3)
-    
-    result1 = (
-            result1
-            .sort_values(
-                "total_sales",
-                ascending=False,
-            )
-            .reset_index(drop=True)
-        )
-    
-    result2 = (
-            data.groupby(
-                "region",
-                as_index=False,
-            )
-            .agg(
-                order_count=("order_id", "nunique"),
-                total_sales=("discounted_value", "sum"),
-                returns=("returned", "sum"),
-            )
-        )
-    
-    result2["total_sales"] = (
-            result2["total_sales"].round(2)
-        )
-    
-    result2["return_rate"] = (
-            result2["returns"]
-            / result2["order_count"]
-        ).round(3)
-    
-    result2 = (
-            result2
-            .sort_values(
-                "total_sales",
-                ascending=False,
-            )
-            .reset_index(drop=True)
-        )
-    
+
+    result1 = summarise_by(data, "product_category")
+    result2 = summarise_by(data, "region")
+
+    #återanvänder result1 och väljer ut kolumnerna som behövs för returns_by_category
     returns_by_category = (
-            data.groupby(
-                "product_category",
-                as_index=False,
-            )
-            .agg(
-                order_count=("order_id", "nunique"),
-                returns=("returned", "sum"),
-            )
-        )
+        result1[["product_category", "order_count", "returns", "return_rate"]]
+        .sort_values("return_rate", ascending=False)
+        .reset_index(drop=True)
+    )
     
-    returns_by_category["return_rate"] = (
-            returns_by_category["returns"]
-            / returns_by_category["order_count"]
-        ).round(3)
-    
-    returns_by_category = (
-            returns_by_category
-            .sort_values(
-                "return_rate",
-                ascending=False,
-            )
-            .reset_index(drop=True)
-        )
     return overview, result1, result2, returns_by_category
 
 def save_results(overview, result1, result2, returns_by_category, output_folder):
