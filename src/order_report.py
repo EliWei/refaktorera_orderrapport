@@ -87,7 +87,7 @@ def summarise_by(data, column):
                
 
 
-# order_value, discounted_value, overview, result1, result2, returns_by_category
+# order_value, discounted_value, overview, sales_by_category, sales_by_region, returns_by_category
 def calculate_metrics(data):
     data["order_value"] = (
             data["quantity"] * data["unit_price"]
@@ -120,19 +120,19 @@ def calculate_metrics(data):
             }
         )
 
-    result1 = summarise_by(data, "product_category")
-    result2 = summarise_by(data, "region")
+    sales_by_category = summarise_by(data, "product_category")
+    sales_by_region = summarise_by(data, "region")
 
-    #återanvänder result1 och väljer ut kolumnerna som behövs för returns_by_category
+    #återanvänder sales_by_category och väljer ut kolumnerna som behövs för returns_by_category
     returns_by_category = (
-        result1[["product_category", "order_count", "returns", "return_rate"]]
+        sales_by_category[["product_category", "order_count", "returns", "return_rate"]]
         .sort_values("return_rate", ascending=False)
         .reset_index(drop=True)
     )
     
-    return overview, result1, result2, returns_by_category
+    return overview, sales_by_category, sales_by_region, returns_by_category
 
-def save_results(overview, result1, result2, returns_by_category, output_folder):
+def save_results(overview, sales_by_category, sales_by_region, returns_by_category, output_folder):
     overview.to_csv(
                 os.path.join(
                     output_folder,
@@ -143,7 +143,7 @@ def save_results(overview, result1, result2, returns_by_category, output_folder)
         
     print("Sparade overview.csv")
     
-    result1.to_csv(
+    sales_by_category.to_csv(
                     os.path.join(
                         output_folder,
                         "sales_by_category.csv",
@@ -152,7 +152,7 @@ def save_results(overview, result1, result2, returns_by_category, output_folder)
                 )
     print("Sparade sales_by_category.csv")
     
-    result2.to_csv(
+    sales_by_region.to_csv(
                 os.path.join(
                     output_folder,
                     "sales_by_region.csv",
@@ -177,8 +177,8 @@ def main():
     try:
         data = load_data(INPUT_FILE)
         data = clean_data(data)
-        overview, result1, result2, returns_by_category = calculate_metrics(data)
-        save_results(overview, result1, result2, returns_by_category, OUTPUT_FOLDER)
+        overview, sales_by_category, sales_by_region, returns_by_category = calculate_metrics(data)
+        save_results(overview, sales_by_category, sales_by_region, returns_by_category, OUTPUT_FOLDER)
         print("Klart")
     except Exception as error:
         print("Något gick fel:", error)
