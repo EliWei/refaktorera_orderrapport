@@ -133,6 +133,7 @@ def calculate_metrics(data):
     return overview, sales_by_category, sales_by_region, returns_by_category
 
 def save_results(overview, sales_by_category, sales_by_region, returns_by_category, output_folder):
+    os.makedirs(output_folder, exist_ok=True)
     overview.to_csv(
                 os.path.join(
                     output_folder,
