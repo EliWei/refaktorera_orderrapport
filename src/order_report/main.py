@@ -1,6 +1,6 @@
 import logging
 
-from .config import INPUT_FILE, OUTPUT_FOLDER
+from .config import DEFAULT_CONFIG
 from .loading import load_data
 from .processing import clean_data, calculate_metrics
 from .reporting import save_results
@@ -16,10 +16,10 @@ logger = logging.getLogger(__name__)
 def main():
     logger.info("Startar orderrapport")
     try:
-        data = load_data(INPUT_FILE)
+        data = load_data(DEFAULT_CONFIG.input_file)
         data = clean_data(data)
         overview, sales_by_category, sales_by_region, returns_by_category = calculate_metrics(data)
-        save_results(overview, sales_by_category, sales_by_region, returns_by_category, OUTPUT_FOLDER)
+        save_results(overview, sales_by_category, sales_by_region, returns_by_category, DEFAULT_CONFIG.output_folder)
         logger.info("Klart")
 
     # Fångar kända fel: fil saknas eller data är ogiltig.
