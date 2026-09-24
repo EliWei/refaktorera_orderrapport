@@ -21,8 +21,9 @@ def load_data(file_path):
         "returned",
     }
 
-    if not required.issubset(data.columns):
-        raise Exception("Fel data")
+    missing = required - set(data.columns)
+    if missing:
+        raise ValueError(f"Saknade kolumner: {sorted(missing)}")
 
     print("Läste in", len(data), "rader")
 
@@ -181,8 +182,12 @@ def main():
         overview, sales_by_category, sales_by_region, returns_by_category = calculate_metrics(data)
         save_results(overview, sales_by_category, sales_by_region, returns_by_category, OUTPUT_FOLDER)
         print("Klart")
-    except Exception as error:
-        print("Något gick fel:", error)
+
+    # Fångar kända fel: fil saknas eller data är ogiltig.
+    except FileNotFoundError as error:
+        print("Hittade inte filen:", error)
+    except ValueError as error:
+        print("Fel i datan:", error)
 
 if __name__ == "__main__":
     main()

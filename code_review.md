@@ -35,7 +35,7 @@ Scriptet går att köra och skapar fyra csv filer med försäljningsinfo.
 
 **Konsekvens:** Alla typer av fel hanteras på samma sätt, oavsett om filen saknas, en kolumn är fel eller koden innehåller en bugg. Traceback visas inte, så det framgår inte vilken rad som orsakade felet. 
 
-**Förslag:** Fånga specifika fel, t.ex. `FileNotFoundError` och `ValueError` med logging.
+**Förslag:** Fånga specifika fel, t.ex. `FileNotFoundError` och `ValueError`, och logga dem med `logging.error()`. Logga oväntade fel med `logging.exception()`.
 
 ### Fynd 5 - Hårdkodade sökvägar och dold förutsättning om outputmappen
 
@@ -70,6 +70,14 @@ Scriptet går att köra och skapar fyra csv filer med försäljningsinfo.
 
 **Förslag:** Skapa en funktion `summarise_by(data, column)` som grupperar, aggregerar och beräknar `return_rate`, och anropa den för `product_category` och `region`. 
 
+### Fynd 9 - All kod låg i en enda fil
+
+**Observation:** Hela programmet, konfiguration, inläsning, validering, bearbetning och sparande, låg i en och samma fil utan tydlig uppdelning mellan ansvarsområden.
+
+**Konsekvens:** Det är svårt för en ny användare att snabbt hitta var i koden ett visst ansvar ligger, t.ex. var valideringen sker eller var filer sparas. Filen blir också svårare att navigera i ju mer den växer.
+
+**Förslag:** Dela upp koden i ett paket med en modul per ansvarsområde, t.ex. `config.py`, `loading.py`, `validation.py`, `processing.py`, `reporting.py` och `main.py`, med `__main__.py` som körs via `python -m order_report` och `__init__.py`.
+
 ## Sammanfattning
 Skriptet läser in orderdata och sparar fyra rapportfiler, men hela programflödet körs på modulnivå och blandar filhantering, transformation och sparning. 
 
@@ -79,6 +87,7 @@ Skriptet läser in orderdata och sparar fyra rapportfiler, men hela programflöd
 1. Fynd 1 - Flera ansvar är sammanblandade
 2. Fynd 2 - Programmet körs på modulnivå utan main-guard
 3. Fynd 4 - Ett generellt except döljer alla fel
+4. Fynd 9 - All kod ligger i en enda fil
 
 ### Medelprioritet
 4. Fynd 3 - Valideringen ger ett generellt fel
