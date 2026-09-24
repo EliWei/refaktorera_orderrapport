@@ -1,4 +1,7 @@
 import pandas as pd
+import logging
+
+logger = logging.getLogger(__name__)
 
 from .validation import validate_columns
 
@@ -23,6 +26,6 @@ def load_data(file_path):
     if missing:
         raise ValueError(f"Saknade kolumner: {sorted(missing)}")
 
-    print("Läste in", len(data), "rader")
+    logger.info("Läste in %d rader", len(data))
 
     return data
