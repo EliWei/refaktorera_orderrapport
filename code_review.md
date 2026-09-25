@@ -43,7 +43,7 @@ Scriptet går att köra och skapar fyra csv filer med försäljningsinfo.
 
 **Konsekvens:** Det går inte att köra programmet med andra filer utan att ändra i koden, och eftersom sökvägarna är relativa fungerar det bara om det körs från rätt katalog. Det blir också svårare att testa med tillfälliga sökvägar. 
 
-**Förslag:** Samla sökvägarna i en liten konfiguration och låt sparfunktioner skapa målmappen vid behov.
+**Förslag:** Samla sökvägarna i en `ReportConfig`-dataclass 
 
 
 ### Fynd 6 - Statusmeddelanden använder print
