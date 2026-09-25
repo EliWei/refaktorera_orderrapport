@@ -75,6 +75,9 @@ Ett test kontrollerar att `summarise_by` grupperar och räknar ut `return_rate` 
 
 **Vad var svårast?**
 Att strukturera om koden så att jag använde min egen funktion `summarise_by` i stället för den upprepande koden i result1, result2 och returns_by_category. Det tog en stund att klura ut hur funktionen skulle se ut, och sedan tog det tid att strukturera om koden.
+Och så måste jag lägga till att jag lärde mig kommandot git diff för den här uppgiften. Och jag 
+har kört git diff output/ hur många gånger som helst för att se till att refaktoreringen inte
+påverkar output. 
 
 **Vad hade du velat förbättra ytterligare om du haft mer tid?**
-Bland annat att göra sökvägarna konfigurerbara via kommandoradsargument, samt fler tester som täcker fler av funktionerna i `processing.py`.
+Bland annat att göra sökvägarna konfigurerbara, samt fler tester som täcker fler av funktionerna i `processing.py`.
